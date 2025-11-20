@@ -35,9 +35,23 @@ export default function InfiniteBoard() {
   const [scale, setScale] = useState(1)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
-  const [showSmartCluster, setShowSmartCluster] = useState(true)
+  const [showSmartCluster, setShowSmartCluster] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 })
   const stageRef = useRef<any>(null)
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      setDimensions({
+        width: window.innerWidth - 384, // Largeur - sidebar
+        height: window.innerHeight - 64  // Hauteur - header
+      })
+    }
+    
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+    return () => window.removeEventListener('resize', updateDimensions)
+  }, [])
 
   // Hook de virtualisation pour ne rendre que les éléments visibles
   const { visibleItems, viewport, updateVisibleItems } = useVirtualizedItems(
@@ -243,8 +257,8 @@ export default function InfiniteBoard() {
       {/* Konva Stage */}
       <Stage
         ref={stageRef}
-        width={window.innerWidth - 384}
-        height={window.innerHeight - 64}
+        width={dimensions.width}
+        height={dimensions.height}
         scaleX={scale}
         scaleY={scale}
         x={position.x}
@@ -258,6 +272,7 @@ export default function InfiniteBoard() {
           // Mettre à jour les éléments visibles après le pan
           updateVisibleItems()
         }}
+        style={{ pointerEvents: 'auto' }}
       >
         <Layer>
           {/* Grille optimisée - ne rend que les lignes visibles */}
