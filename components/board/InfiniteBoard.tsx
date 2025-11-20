@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useCallback } from "react"
-import { Stage, Layer, Rect, Text, Image as KonvaImage } from "./KonvaWrapper"
+import { Stage, Layer, Rect, Text, Image as KonvaImage } from "react-konva"
 import { Plus, Upload, Wand2, Video, FileText, Image as ImageIcon, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useDropzone } from "react-dropzone"
