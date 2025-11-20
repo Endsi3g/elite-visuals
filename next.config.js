@@ -30,16 +30,7 @@ const nextConfig = {
     if (isServer) {
       config.externals = [...(config.externals || []), 'canvas', 'konva', 'react-konva']
     }
-    // Alias pour forcer l'utilisation de la version browser de Konva
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'konva': 'konva/lib/index-browser.js',
-    }
     return config
-  },
-  experimental: {
-    // Supprimer l'option serverActions obsolète
-    optimizePackageImports: ['react-konva', 'konva'],
   },
 }
 
