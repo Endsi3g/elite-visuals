@@ -80,7 +80,13 @@ export function useVirtualizedItems<T extends BoardItem>(
     })
 
     setVisibleItems(visible)
-  }, [items, buffer])
+  }, [items, buffer, stageRef])
+
+  // Version debounced pour les mises à jour fréquentes
+  const debouncedUpdate = useCallback(
+    debounce(updateVisibleItems, 100),
+    [updateVisibleItems]
+  )
 
   // Mettre à jour lors du chargement initial, redimensionnement, ou changement d'items
   useEffect(() => {
