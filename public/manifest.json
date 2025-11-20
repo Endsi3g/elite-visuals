@@ -1,0 +1,55 @@
+{
+  "name": "Elite Visuals - OS Créatif Collaboratif",
+  "short_name": "Elite Visuals",
+  "description": "Le premier OS Créatif Collaboratif pour agences francophones",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FF684A",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "business", "design"],
+  "screenshots": [
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nouveau Board",
+      "short_name": "Board",
+      "description": "Créer un nouveau board",
+      "url": "/?action=new-board",
+      "icons": [{ "src": "/icon-board.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Kanban",
+      "short_name": "Kanban",
+      "description": "Ouvrir le Kanban",
+      "url": "/?view=kanban",
+      "icons": [{ "src": "/icon-kanban.png", "sizes": "96x96" }]
+    }
+  ]
+}

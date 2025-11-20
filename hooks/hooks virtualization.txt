@@ -1,0 +1,7 @@
+// hooks/use-virtualization.ts
+export function useVirtualization(items, position, scale) {
+  return useMemo(() => {
+    const viewport = { x, y, width, height }
+    return items.filter(item => isInViewport(item, viewport))
+  }, [items, position, scale])
+}

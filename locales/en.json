@@ -1,0 +1,103 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "export": "Export",
+    "import": "Import",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "error": "Error",
+    "success": "Success"
+  },
+  "board": {
+    "title": "Visual Board",
+    "addCard": "Add card",
+    "addText": "Add text",
+    "addImage": "Add image",
+    "generateAI": "Generate with AI",
+    "zoom": "Zoom",
+    "items": "Items",
+    "clusters": "Clusters",
+    "dropFiles": "Drop your files here"
+  },
+  "smartCluster": {
+    "title": "Smart Clustering",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing...",
+    "createCluster": "Create cluster",
+    "description": "AI can detect semantic groups in your elements",
+    "noSuggestions": "No suggestions at the moment"
+  },
+  "showroom": {
+    "title": "Showroom Mode",
+    "active": "Active Mode",
+    "readOnly": "Read only",
+    "watermark": "Automatic watermark",
+    "cleanInterface": "Clean interface",
+    "noEditing": "No editing possible",
+    "copyLink": "Copy link",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "description": "Activate showroom mode to share your board with your clients"
+  },
+  "export": {
+    "title": "Export Board",
+    "markdown": "Markdown",
+    "pdf": "PDF",
+    "video": "Video",
+    "inProgress": "Export in progress...",
+    "success": "Export successful!",
+    "error": "Export error"
+  },
+  "chat": {
+    "title": "AI Assistant",
+    "placeholder": "Ask your question...",
+    "welcome": "Hello! I'm your Elite Visuals AI assistant. How can I help you with your board?",
+    "typing": "Typing...",
+    "send": "Send"
+  },
+  "search": {
+    "title": "AI Search",
+    "placeholder": "Smart search on board...",
+    "filter": "Filter",
+    "noResults": "No results found",
+    "tryAgain": "Try another search or adjust filters",
+    "relevance": "relevant",
+    "contentType": "Content type",
+    "minRelevance": "Minimum relevance",
+    "all": "All",
+    "text": "Text",
+    "image": "Image",
+    "video": "Video",
+    "file": "File",
+    "aiGenerated": "AI Generated"
+  },
+  "mindmap": {
+    "title": "Mind Map",
+    "addNode": "Add node",
+    "generateAI": "Generate AI",
+    "doubleClick": "Double-click on a node to generate children",
+    "centralIdea": "Central Idea"
+  },
+  "collaboration": {
+    "activeUsers": "Active users",
+    "joined": "joined",
+    "left": "left",
+    "youAreEditing": "You are editing",
+    "isEditing": "is editing"
+  },
+  "errors": {
+    "loadFailed": "Load failed",
+    "saveFailed": "Save failed",
+    "networkError": "Network error",
+    "unauthorized": "Unauthorized",
+    "rateLimitExceeded": "Rate limit exceeded",
+    "tryAgainLater": "Please try again later"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "export": "Exporter",
+    "import": "Importer",
+    "share": "Partager",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "error": "Erreur",
+    "success": "Succès"
+  },
+  "board": {
+    "title": "Board Visuel",
+    "addCard": "Ajouter une carte",
+    "addText": "Ajouter du texte",
+    "addImage": "Ajouter une image",
+    "generateAI": "Générer avec IA",
+    "zoom": "Zoom",
+    "items": "Éléments",
+    "clusters": "Clusters",
+    "dropFiles": "Déposez vos fichiers ici"
+  },
+  "smartCluster": {
+    "title": "Smart Clustering",
+    "analyze": "Analyser",
+    "analyzing": "Analyse en cours...",
+    "createCluster": "Créer le cluster",
+    "description": "L'IA peut détecter des groupes sémantiques dans vos éléments",
+    "noSuggestions": "Aucune suggestion pour le moment"
+  },
+  "showroom": {
+    "title": "Mode Showroom",
+    "active": "Mode Actif",
+    "readOnly": "Lecture seule",
+    "watermark": "Watermark automatique",
+    "cleanInterface": "Interface épurée",
+    "noEditing": "Pas d'édition possible",
+    "copyLink": "Copier le lien",
+    "activate": "Activer",
+    "deactivate": "Désactiver",
+    "description": "Activez le mode showroom pour partager votre board avec vos clients"
+  },
+  "export": {
+    "title": "Exporter le Board",
+    "markdown": "Markdown",
+    "pdf": "PDF",
+    "video": "Vidéo",
+    "inProgress": "Export en cours...",
+    "success": "Export réussi !",
+    "error": "Erreur lors de l'export"
+  },
+  "chat": {
+    "title": "Assistant IA",
+    "placeholder": "Posez votre question...",
+    "welcome": "Bonjour ! Je suis votre assistant IA Elite Visuals. Comment puis-je vous aider avec votre board ?",
+    "typing": "En train d'écrire...",
+    "send": "Envoyer"
+  },
+  "search": {
+    "title": "Recherche IA",
+    "placeholder": "Recherche intelligente sur le board...",
+    "filter": "Filtrer",
+    "noResults": "Aucun résultat trouvé",
+    "tryAgain": "Essayez une autre recherche ou ajustez les filtres",
+    "relevance": "pertinent",
+    "contentType": "Type de contenu",
+    "minRelevance": "Pertinence minimale",
+    "all": "Tous",
+    "text": "Texte",
+    "image": "Image",
+    "video": "Vidéo",
+    "file": "Fichier",
+    "aiGenerated": "IA Généré"
+  },
+  "mindmap": {
+    "title": "Mind Map",
+    "addNode": "Ajouter nœud",
+    "generateAI": "Générer IA",
+    "doubleClick": "Double-clic sur un nœud pour générer des enfants",
+    "centralIdea": "Idée Centrale"
+  },
+  "collaboration": {
+    "activeUsers": "Utilisateurs actifs",
+    "joined": "a rejoint",
+    "left": "a quitté",
+    "youAreEditing": "Vous modifiez",
+    "isEditing": "modifie"
+  },
+  "errors": {
+    "loadFailed": "Échec du chargement",
+    "saveFailed": "Échec de l'enregistrement",
+    "networkError": "Erreur réseau",
+    "unauthorized": "Non autorisé",
+    "rateLimitExceeded": "Limite de requêtes dépassée",
+    "tryAgainLater": "Veuillez réessayer plus tard"
+  }
+}
