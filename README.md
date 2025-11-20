@@ -4,17 +4,20 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Ready-green)](https://supabase.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-black)](https://vercel.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 **Le premier OS Créatif Collaboratif pour agences francophones**
 
-> 🔗 **Repository GitHub** : [https://github.com/Endsi3g/elite-visuals](https://github.com/Endsi3g/elite-visuals)
+> 🔗 **Repository GitHub** : [https://github.com/Endsi3g/elite-visuals](https://github.com/Endsi3g/elite-visuals)  
+> 🚀 **Déploiement Vercel** : [https://elite-visuals.vercel.app](https://elite-visuals.vercel.app)
 
 Application web moderne fusionnant idéation (whiteboard), gestion de projet (Kanban IA) et production (GenAI) dans une interface unifiée.
 
 > **Proposition de Valeur Unique:** "De l'idée à l'asset final sans changer d'onglet."
 
-**Conformité PRD v1.0:** 86% ✅ | [Voir détails](./PRD_IMPLEMENTATION.md)
+**Conformité PRD v1.0:** 86% ✅ | [Voir détails](./PRD_IMPLEMENTATION.md)  
+**Statut Déploiement:** ✅ Production Ready | [Guide de déploiement](./QUICK_START_DEPLOY.md)
 
 ## ✨ Fonctionnalités Principales
 
@@ -115,7 +118,26 @@ npm start
 
 ## 🚀 Déploiement
 
-L'application est prête pour le déploiement sur Vercel, Netlify, Railway ou Docker.
+### ✅ Statut de Production
+
+**L'application est déployée et fonctionnelle sur Vercel !**
+
+🔗 **URL de production:** [https://elite-visuals.vercel.app](https://elite-visuals.vercel.app)
+
+### 📋 Corrections Récentes (Nov 2025)
+
+Toutes les erreurs de build Vercel ont été résolues :
+
+- ✅ **Konva SSR** - Configuration webpack optimisée pour exclure Konva côté serveur
+- ✅ **Imports dynamiques** - Utilisation de `"use client"` pour tous les composants Konva
+- ✅ **tailwindcss-animate** - Dépendance manquante ajoutée
+- ✅ **TypeScript** - Hook `useVirtualizedItems` corrigé avec `debouncedUpdate`
+- ✅ **ESLint** - Configuration `.eslintrc.json` créée
+- ✅ **Supabase** - Variables d'environnement configurées
+
+**6 commits de corrections** poussés sur GitHub avec succès.
+
+### 🛠️ Guides de Déploiement
 
 **Démarrage rapide :** Consultez [`QUICK_START_DEPLOY.md`](./QUICK_START_DEPLOY.md)
 
