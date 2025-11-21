@@ -1,13 +1,41 @@
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 /**
- * Middleware Next.js pour la sécurité et CORS
- * S'exécute sur toutes les requêtes
+ * Middleware Next.js pour la sécurité et l'authentification
  */
-export function middleware(request: NextRequest) {
-  const origin = request.headers.get('origin')
-  const response = NextResponse.next()
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next()
+  const supabase = createMiddlewareClient({ req, res })
+
+  // Rafraîchir la session si elle existe
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  // Routes protégées qui nécessitent une authentification
+  const protectedRoutes = ['/dashboard']
+  const isProtectedRoute = protectedRoutes.some(route => req.nextUrl.pathname.startsWith(route))
+
+  // Routes d'authentification (accessibles uniquement si NON connecté)
+  const authRoutes = ['/login', '/signup']
+  const isAuthRoute = authRoutes.some(route => req.nextUrl.pathname.startsWith(route))
+
+  // Redirection si non connecté et accès à une route protégée
+  if (isProtectedRoute && !session) {
+    const redirectUrl = req.nextUrl.clone()
+    redirectUrl.pathname = '/login'
+    redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname)
+    return NextResponse.redirect(redirectUrl)
+  }
+
+  // Redirection si connecté et accès à une route d'auth
+  if (isAuthRoute && session) {
+    const redirectUrl = req.nextUrl.clone()
+    redirectUrl.pathname = '/dashboard'
+    return NextResponse.redirect(redirectUrl)
+  }
 
   // Headers de sécurité
   const securityHeaders = {
@@ -20,26 +48,19 @@ export function middleware(request: NextRequest) {
 
   // Ajouter les headers de sécurité
   Object.entries(securityHeaders).forEach(([key, value]) => {
-    response.headers.set(key, value)
+    res.headers.set(key, value)
   })
 
   // CORS - Autoriser les origines en développement
   if (process.env.NODE_ENV === 'development') {
-    response.headers.set('Access-Control-Allow-Origin', origin || '*')
-    response.headers.set('Access-Control-Allow-Credentials', 'true')
-    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
+    const origin = req.headers.get('origin')
+    res.headers.set('Access-Control-Allow-Origin', origin || '*')
+    res.headers.set('Access-Control-Allow-Credentials', 'true')
+    res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
   }
 
-  // Gérer les requêtes OPTIONS (preflight)
-  if (request.method === 'OPTIONS') {
-    return new NextResponse(null, {
-      status: 204,
-      headers: response.headers,
-    })
-  }
-
-  return response
+  return res
 }
 
 // Configuration du middleware
