@@ -7,6 +7,15 @@ process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-key'
 process.env.OLLAMA_BASE_URL = 'http://localhost:11434'
 process.env.OLLAMA_MODEL = 'llama3'
 
+// Mock fetch globally
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+  })
+)
+
 // Mock Konva
 jest.mock('konva', () => ({
   Stage: jest.fn(),
@@ -17,13 +26,16 @@ jest.mock('konva', () => ({
 }))
 
 // Mock react-konva
-jest.mock('react-konva', () => ({
-  Stage: ({ children }: any) => <div data-testid="konva-stage">{children}</div>,
-  Layer: ({ children }: any) => <div data-testid="konva-layer">{children}</div>,
-  Rect: () => <div data-testid="konva-rect" />,
-  Circle: () => <div data-testid="konva-circle" />,
-  Image: () => <div data-testid="konva-image" />,
-}))
+jest.mock('react-konva', () => {
+  const React = require('react')
+  return {
+    Stage: ({ children }) => React.createElement('div', { 'data-testid': 'konva-stage' }, children),
+    Layer: ({ children }) => React.createElement('div', { 'data-testid': 'konva-layer' }, children),
+    Rect: () => React.createElement('div', { 'data-testid': 'konva-rect' }),
+    Circle: () => React.createElement('div', { 'data-testid': 'konva-circle' }),
+    Image: () => React.createElement('div', { 'data-testid': 'konva-image' }),
+  }
+})
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
