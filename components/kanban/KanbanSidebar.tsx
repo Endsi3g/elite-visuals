@@ -70,18 +70,22 @@ export default function KanbanSidebar() {
   const doneTasks = tasks.filter((t) => t.status === "done")
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <aside 
+      className="h-full flex flex-col bg-white"
+      aria-label="Panneau Kanban"
+    >
       {/* Header */}
-      <div className="p-4 border-b border-gray-200">
+      <header className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-bold text-gray-900">Kanban IA</h2>
           <Button
             onClick={addNewTask}
             size="sm"
-            className="bg-primary hover:bg-primary/90"
+            className="bg-primary hover:bg-primary/90 min-w-[44px] min-h-[44px] touch-manipulation"
+            aria-label="Ajouter une nouvelle tâche"
           >
-            <Plus className="h-4 w-4 mr-1" />
-            Tâche
+            <Plus className="h-4 w-4 mr-1" aria-hidden="true" />
+            <span className="hidden sm:inline">Tâche</span>
           </Button>
         </div>
         
@@ -103,7 +107,7 @@ export default function KanbanSidebar() {
       </div>
 
       {/* Kanban Columns */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <main className="flex-1 overflow-y-auto p-4 space-y-4" role="main">
         <KanbanColumn
           title="À faire"
           tasks={todoTasks}
@@ -122,15 +126,15 @@ export default function KanbanSidebar() {
           status="done"
           onUpdateStatus={updateTaskStatus}
         />
-      </div>
+      </main>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200 bg-gray-50">
+      <footer className="p-4 border-t border-gray-200 bg-gray-50">
         <div className="flex items-center gap-2 text-xs text-gray-600">
           <Bot className="h-4 w-4 text-primary" />
           <span>Agents IA actifs: OpenAI, Claude, Luma</span>
         </div>
-      </div>
-    </div>
+      </footer>
+    </aside>
   )
 }

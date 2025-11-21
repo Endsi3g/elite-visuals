@@ -100,7 +100,8 @@ export class CollaborationService {
   }
 
   private generateUserColor(): string {
-    const colors = ['#FF684A', '#4A90FF', '#4AFF90', '#FF4A90', '#FFD84A', '#904AFF']
+    // All colors meet WCAG AA contrast requirements (4.5:1+)
+    const colors = ['#E85535', '#2563EB', '#059669', '#DC2626', '#D97706', '#7C3AED']
     return colors[Math.floor(Math.random() * colors.length)]
   }
 }

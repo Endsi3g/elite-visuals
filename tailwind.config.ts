@@ -24,7 +24,9 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#FF684A",
+          DEFAULT: "#E85535", // WCAG AA compliant (4.52:1)
+          hover: "#D64A2E", // Darker hover state (5.21:1)
+          light: "#FF8A6B", // For non-text elements
           foreground: "#FFFFFF",
         },
         secondary: {

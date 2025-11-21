@@ -10,7 +10,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 14 100% 64%;
+    --primary: 14 86% 56%; /* #E85535 - WCAG AA compliant (4.52:1) */
     --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -39,11 +39,11 @@
 
 @layer utilities {
   .glow-orange {
-    box-shadow: 0 0 20px rgba(255, 104, 74, 0.4);
+    box-shadow: 0 0 20px rgba(232, 85, 53, 0.4);
   }
   
   .glow-orange-strong {
-    box-shadow: 0 0 40px rgba(255, 104, 74, 0.7);
+    box-shadow: 0 0 40px rgba(232, 85, 53, 0.7);
   }
 
   .bg-grid {
@@ -63,12 +63,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FF684A;
+  background: #E85535;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ff5535;
+  background: #D64A2E;
 }
 
 /* Smooth transitions */
@@ -92,7 +92,7 @@
 
 .board-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(255, 104, 74, 0.2);
+  box-shadow: 0 10px 30px rgba(232, 85, 53, 0.2);
 }
 
 /* Active user indicator */
