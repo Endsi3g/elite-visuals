@@ -2,7 +2,7 @@
 
 **Plateforme collaborative de création visuelle avec IA**
 
-Elite Visuals est une application web moderne qui combine la puissance de l'IA avec des outils de collaboration en temps réel pour créer, organiser et partager des contenus visuels.
+Elite Visuals est une application web moderne qui combine la puissance de l'IA avec des outils de collaboration en temps réel pour créer, organiser et partager des contenus visuels et des vidéos virales.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.6-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5.4-blue)](https://www.typescriptlang.org/)
@@ -341,7 +341,7 @@ npm run dev
 
 ---
 
-## 📄 Licence
+## 📄 Licence  
 
 Ce projet est sous licence **MIT**.
 
