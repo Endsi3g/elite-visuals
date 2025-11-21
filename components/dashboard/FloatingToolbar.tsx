@@ -28,6 +28,9 @@ function ToolButton({ icon: Icon, label, onClick, active, glow, disabled }: Tool
         disabled={disabled}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        aria-label={label}
+        title={label}
+        type="button"
         className={cn(
           "w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300",
           "border shadow-sm",
@@ -37,7 +40,7 @@ function ToolButton({ icon: Icon, label, onClick, active, glow, disabled }: Tool
           glow && !active && "hover:shadow-glow"
         )}
       >
-        <Icon className="w-5 h-5" />
+        <Icon className="w-5 h-5" aria-hidden="true" />
       </button>
 
       {/* Tooltip */}
