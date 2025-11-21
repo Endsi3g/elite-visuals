@@ -1,17 +1,11 @@
 import axios from "axios"
-
-// Configuration Ollama (LLM Open Source)
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434"
-const DEFAULT_MODEL = process.env.OLLAMA_MODEL || "llama3" // ou "mistral", "codellama", etc.
-
-// Alternative: Utiliser HuggingFace Inference API
-const HF_API_KEY = process.env.HUGGINGFACE_API_KEY
-const HF_MODEL = process.env.HF_MODEL || "mistralai/Mistral-7B-Instruct-v0.2"
+import { getConfig } from "./ollama.config"
 
 // Fonction helper pour appeler Ollama
 async function callOllama(prompt: string, systemPrompt?: string) {
-  const response = await axios.post(`${OLLAMA_BASE_URL}/api/generate`, {
-    model: DEFAULT_MODEL,
+  const config = getConfig()
+  const response = await axios.post(`${config.baseUrl}/api/generate`, {
+    model: config.model,
     prompt: systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt,
     stream: false,
     options: {
@@ -24,16 +18,17 @@ async function callOllama(prompt: string, systemPrompt?: string) {
 
 // Alternative: HuggingFace Inference API
 async function callHuggingFace(prompt: string, systemPrompt?: string) {
-  if (!HF_API_KEY) {
+  const config = getConfig()
+  if (!config.hfApiKey) {
     throw new Error("HuggingFace API key not configured")
   }
 
   const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt
   
   const response = await axios.post(
-    `https://api-inference.huggingface.co/models/${HF_MODEL}`,
+    `https://api-inference.huggingface.co/models/${config.hfModel}`,
     { inputs: fullPrompt, parameters: { max_new_tokens: 1000, temperature: 0.7 } },
-    { headers: { Authorization: `Bearer ${HF_API_KEY}` } }
+    { headers: { Authorization: `Bearer ${config.hfApiKey}` } }
   )
   
   return response.data[0]?.generated_text || response.data.generated_text
@@ -56,7 +51,7 @@ export async function generateScript(prompt: string, context?: string) {
     return {
       success: true,
       content,
-      model: DEFAULT_MODEL,
+      model: getConfig().model,
     }
   } catch (error) {
     console.error("OpenAI Error:", error)
@@ -80,7 +75,7 @@ export async function analyzeMedia(
     if (mediaType === "image") {
       // Utiliser LLaVA via Ollama pour l'analyse d'images
       try {
-        const response = await axios.post(`${OLLAMA_BASE_URL}/api/generate`, {
+        const response = await axios.post(`${getConfig().baseUrl}/api/generate`, {
           model: "llava", // Modèle vision d'Ollama
           prompt,
           images: [content], // Base64 ou URL
@@ -98,7 +93,7 @@ export async function analyzeMedia(
     return {
       success: true,
       analysis,
-      model: mediaType === "image" ? "llava" : DEFAULT_MODEL,
+      model: mediaType === "image" ? "llava" : getConfig().model,
     }
   } catch (error) {
     console.error("OpenAI Analysis Error:", error)
@@ -112,7 +107,7 @@ export async function analyzeMedia(
 // Alias pour analyzeImage (compatibilité avec les tests)
 export async function analyzeImage(imageUrl: string) {
   try {
-    const response = await axios.post(`${OLLAMA_BASE_URL}/api/generate`, {
+    const response = await axios.post(`${getConfig().baseUrl}/api/generate`, {
       model: "llava",
       prompt: "Analyse cette image et fournis des insights créatifs.",
       images: [imageUrl],
@@ -138,13 +133,14 @@ export async function transcribeAudio(audioFile: File | string) {
     }
 
     // Option 1: HuggingFace Whisper
-    if (HF_API_KEY) {
+    const config = getConfig()
+    if (config.hfApiKey) {
       const hfResponse = await axios.post(
         "https://api-inference.huggingface.co/models/openai/whisper-large-v3",
         audioBuffer,
         {
           headers: {
-            Authorization: `Bearer ${HF_API_KEY}`,
+            Authorization: `Bearer ${config.hfApiKey}`,
             "Content-Type": "audio/mpeg",
           },
         }
@@ -170,8 +166,9 @@ export async function generateBrief(requirements: string[]) {
 
     let brief: string
     try {
-      const response = await axios.post(`${OLLAMA_BASE_URL}/api/generate`, {
-        model: DEFAULT_MODEL,
+      const config = getConfig()
+      const response = await axios.post(`${config.baseUrl}/api/generate`, {
+        model: config.model,
         prompt: `${systemPrompt}\n\n${prompt}`,
         stream: false,
         options: {
@@ -187,7 +184,7 @@ export async function generateBrief(requirements: string[]) {
     return {
       success: true,
       brief,
-      model: DEFAULT_MODEL,
+      model: getConfig().model,
     }
   } catch (error) {
     console.error("Brief Generation Error:", error)

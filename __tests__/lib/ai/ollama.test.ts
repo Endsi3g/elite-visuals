@@ -1,12 +1,27 @@
 import axios from 'axios'
 import { generateScript, analyzeImage, transcribeAudio } from '@/lib/ai/ollama'
+import { setConfig, resetConfig } from '@/lib/ai/ollama.config'
 
 jest.mock('axios')
 const mockedAxios = axios as jest.Mocked<typeof axios>
 
+// Helper pour créer un mock de File avec arrayBuffer
+const createMockFile = (content: string, filename: string, type: string): File => {
+  const file = new File([content], filename, { type })
+  file.arrayBuffer = jest.fn().mockResolvedValue(new ArrayBuffer(content.length))
+  return file
+}
+
 describe('Ollama AI Service', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    // Réinitialiser la configuration pour chaque test
+    resetConfig()
+  })
+
+  afterEach(() => {
+    // Restaurer la configuration par défaut
+    resetConfig()
   })
 
   describe('generateScript', () => {
@@ -40,17 +55,13 @@ describe('Ollama AI Service', () => {
       expect(result.error).toBeDefined()
     })
 
-    it.skip('uses correct model from environment', async () => {
-      // TODO: Améliorer le mock pour supporter jest.resetModules()
-      const originalModel = process.env.OLLAMA_MODEL
-      process.env.OLLAMA_MODEL = 'mistral'
-      
-      jest.resetModules()
-      const { generateScript: generateScriptReloaded } = require('@/lib/ai/ollama')
+    it('uses correct model from configuration', async () => {
+      // Utiliser setConfig au lieu de jest.resetModules()
+      setConfig({ model: 'mistral' })
       
       mockedAxios.post.mockResolvedValue({ data: { response: 'test' } })
 
-      await generateScriptReloaded('Test')
+      await generateScript('Test')
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
         expect.any(String),
@@ -58,8 +69,6 @@ describe('Ollama AI Service', () => {
           model: 'mistral',
         })
       )
-      
-      process.env.OLLAMA_MODEL = originalModel
     })
   })
 
@@ -92,12 +101,9 @@ describe('Ollama AI Service', () => {
   })
 
   describe('transcribeAudio', () => {
-    // Ces tests nécessitent une clé API HuggingFace et un rechargement de module complexe
-    // Ils sont skip pour l'instant car la fonctionnalité fonctionne en production
-    it.skip('transcribes audio file', async () => {
-      // TODO: Améliorer le mock pour supporter jest.resetModules()
-      const originalKey = process.env.HUGGINGFACE_API_KEY
-      process.env.HUGGINGFACE_API_KEY = 'test-key'
+    it('transcribes audio file with HuggingFace API', async () => {
+      // Utiliser setConfig au lieu de jest.resetModules()
+      setConfig({ hfApiKey: 'test-key' })
       
       const mockResponse = {
         data: {
@@ -105,38 +111,48 @@ describe('Ollama AI Service', () => {
         },
       }
       mockedAxios.post.mockResolvedValue(mockResponse)
-      
-      jest.resetModules()
-      const { transcribeAudio: transcribeAudioReloaded } = require('@/lib/ai/ollama')
 
-      const audioFile = new File(['audio'], 'test.mp3', { type: 'audio/mp3' })
-      audioFile.arrayBuffer = jest.fn().mockResolvedValue(new ArrayBuffer(8))
-
-      const result = await transcribeAudioReloaded(audioFile)
+      const audioFile = createMockFile('audio', 'test.mp3', 'audio/mp3')
+      const result = await transcribeAudio(audioFile)
 
       expect(result).toBe('Transcribed audio content')
-      
-      process.env.HUGGINGFACE_API_KEY = originalKey
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        'https://api-inference.huggingface.co/models/openai/whisper-large-v3',
+        expect.any(ArrayBuffer),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: 'Bearer test-key',
+          }),
+        })
+      )
     })
 
-    it.skip('handles large audio files', async () => {
-      // TODO: Améliorer le mock pour supporter jest.resetModules()
-      const originalKey = process.env.HUGGINGFACE_API_KEY
-      process.env.HUGGINGFACE_API_KEY = 'test-key'
+    it('handles large audio files', async () => {
+      setConfig({ hfApiKey: 'test-key' })
       
       mockedAxios.post.mockResolvedValue({ data: { text: 'transcription' } })
       
-      jest.resetModules()
-      const { transcribeAudio: transcribeAudioReloaded } = require('@/lib/ai/ollama')
-      
-      const largeAudio = new File(['x'.repeat(1000)], 'large.mp3', {
-        type: 'audio/mp3',
-      })
-      largeAudio.arrayBuffer = jest.fn().mockResolvedValue(new ArrayBuffer(1000))
+      const largeAudio = createMockFile('x'.repeat(1000), 'large.mp3', 'audio/mp3')
+      const result = await transcribeAudio(largeAudio)
 
-      await expect(transcribeAudioReloaded(largeAudio)).resolves.toBeDefined()
+      expect(result).toBe('transcription')
+      expect(mockedAxios.post).toHaveBeenCalled()
+    })
+
+    it('returns error object when no API key is configured', async () => {
+      // Pas de clé API configurée
+      resetConfig()
       
-      process.env.HUGGINGFACE_API_KEY = originalKey
+      const audioFile = createMockFile('audio', 'test.mp3', 'audio/mp3')
+      
+      const result = await transcribeAudio(audioFile)
+      
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: false,
+          error: expect.stringContaining('Transcription requires HuggingFace API key'),
+        })
+      )
     })
   })
 })
