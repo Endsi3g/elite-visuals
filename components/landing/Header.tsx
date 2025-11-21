@@ -20,11 +20,11 @@ export function Header() {
   }, [])
 
   const navItems = [
-    { name: "Fonctionnalités", href: "#features" },
-    { name: "Comment ça marche", href: "#how-it-works" },
-    { name: "Cas d'usage", href: "#use-cases" },
-    { name: "Tarifs", href: "#pricing" },
-    { name: "FAQ", href: "#faq" },
+    { name: "Fonctionnalités", href: "/features" },
+    { name: "Comment ça marche", href: "/how-it-works" },
+    { name: "Cas d'usage", href: "/use-cases" },
+    { name: "Tarifs", href: "/pricing" },
+    { name: "FAQ", href: "/faq" },
   ]
 
   return (
