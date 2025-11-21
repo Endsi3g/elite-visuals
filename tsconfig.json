@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "__tests__/setup.d.ts"
+    "__tests__/setup.d.ts",
+    "jest-dom.d.ts"
   ],
   "exclude": ["node_modules"]
 }
