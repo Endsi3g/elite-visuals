@@ -15,23 +15,40 @@ const nextConfig = {
         hostname: '*.supabase.in',
       },
     ],
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   // Optimisation pour le déploiement
   output: 'standalone',
+  outputFileTracingRoot: require('path').join(__dirname, '../'),
   poweredByHeader: false,
   compress: true,
+  
+  // Optimisations de performance
+  reactStrictMode: true,
+  
+  // Optimisation des bundles
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
+  
   // Variables d'environnement requises pour le build
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
-  // Exclure les modules canvas/konva du bundle serveur
+  
+  // Configuration pour Turbopack et Webpack
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals = [...(config.externals || []), 'canvas', 'konva', 'react-konva']
     }
     return config
   },
+  
+  // Configuration Turbopack (équivalent pour le mode turbopack)
+  transpilePackages: ['konva', 'react-konva'],
 }
 
 module.exports = nextConfig

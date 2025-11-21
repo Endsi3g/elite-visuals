@@ -29,12 +29,27 @@ export function sanitizeHTML(html: string): string {
   const allowedTags = ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'h1', 'h2', 'h3']
   const allowedAttributes = ['href', 'title', 'target']
 
-  // Retirer les balises script et style
+  // Retirer les balises script et style de manière itérative pour éviter les contournements
   let sanitized = html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, '') // Retirer les event handlers
-    .replace(/on\w+='[^']*'/gi, '')
+  let previousLength = 0
+  
+  // Continuer jusqu'à ce qu'il n'y ait plus de changements
+  while (sanitized.length !== previousLength) {
+    previousLength = sanitized.length
+    // Retirer script tags ([\s\S] pour matcher tous les caractères incluant newlines)
+    sanitized = sanitized.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    sanitized = sanitized.replace(/<script[^>]*>/gi, '')
+    // Retirer style tags
+    sanitized = sanitized.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    sanitized = sanitized.replace(/<style[^>]*>/gi, '')
+    // Retirer les event handlers (on*)
+    sanitized = sanitized.replace(/\son\w+\s*=\s*["'][^"']*["']/gi, '')
+    sanitized = sanitized.replace(/\son\w+\s*=\s*[^\s>]*/gi, '')
+    // Retirer javascript: dans les URLs
+    sanitized = sanitized.replace(/javascript:/gi, '')
+    // Retirer data: URIs potentiellement dangereux
+    sanitized = sanitized.replace(/data:text\/html/gi, '')
+  }
 
   return sanitized
 }

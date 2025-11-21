@@ -4,12 +4,13 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { ArrowRight, Loader2 } from "lucide-react"
+import { ArrowRight, Loader2, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { auth } from "@/lib/supabase/client"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { auth, isSupabaseConfigured } from "@/lib/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
@@ -45,9 +46,18 @@ export default function LoginPage() {
         router.push("/dashboard")
       }
     } catch (error: any) {
+      console.error('Login error:', error)
+      
+      let errorMessage = error.message || "Une erreur est survenue"
+      
+      // Gestion spécifique de l'erreur "Failed to fetch"
+      if (error.message === "Failed to fetch" || error.name === "TypeError") {
+        errorMessage = "Impossible de se connecter au serveur d'authentification. Vérifiez votre connexion internet ou la configuration Supabase."
+      }
+      
       toast({
-        title: "Erreur",
-        description: error.message || "Une erreur est survenue",
+        title: "Erreur de connexion",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -89,6 +99,26 @@ export default function LoginPage() {
 
         <Card className="border-gray-200 shadow-xl bg-white/80 backdrop-blur-sm">
           <CardContent className="pt-6">
+            {!isSupabaseConfigured && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Configuration requise</AlertTitle>
+                <AlertDescription>
+                  Supabase n'est pas configuré. Veuillez mettre à jour votre fichier{" "}
+                  <code className="bg-red-100 px-1 py-0.5 rounded text-xs">.env.local</code>{" "}
+                  avec vos identifiants Supabase.
+                  <br />
+                  <a
+                    href="https://app.supabase.com/project/_/settings/api"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline text-red-800 hover:text-red-900 mt-1 inline-block"
+                  >
+                    Obtenir vos identifiants →
+                  </a>
+                </AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>

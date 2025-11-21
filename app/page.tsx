@@ -1,19 +1,48 @@
+import dynamic from 'next/dynamic'
 import { Header } from "@/components/landing/Header"
 import { Hero } from "@/components/landing/Hero"
-import { Features } from "@/components/landing/Features"
-import { HowItWorks } from "@/components/landing/HowItWorks"
-import { UseCases } from "@/components/landing/UseCases"
-import { Testimonials } from "@/components/landing/Testimonials"
-import { Pricing } from "@/components/landing/Pricing"
-import { FAQ } from "@/components/landing/FAQ"
-import { CTA } from "@/components/landing/CTA"
-import { Footer } from "@/components/landing/Footer"
+
+// Lazy load des composants non-critiques (below the fold)
+const Features = dynamic(() => import("@/components/landing/Features").then(mod => ({ default: mod.Features })), {
+  loading: () => <div className="h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>
+})
+
+const HowItWorks = dynamic(() => import("@/components/landing/HowItWorks").then(mod => ({ default: mod.HowItWorks })), {
+  loading: () => <div className="h-96"></div>
+})
+
+const UseCases = dynamic(() => import("@/components/landing/UseCases").then(mod => ({ default: mod.UseCases })), {
+  loading: () => <div className="h-96"></div>
+})
+
+const Testimonials = dynamic(() => import("@/components/landing/Testimonials").then(mod => ({ default: mod.Testimonials })), {
+  loading: () => <div className="h-96"></div>
+})
+
+const Pricing = dynamic(() => import("@/components/landing/Pricing").then(mod => ({ default: mod.Pricing })), {
+  loading: () => <div className="h-96"></div>
+})
+
+const FAQ = dynamic(() => import("@/components/landing/FAQ").then(mod => ({ default: mod.FAQ })), {
+  loading: () => <div className="h-96"></div>
+})
+
+const CTA = dynamic(() => import("@/components/landing/CTA").then(mod => ({ default: mod.CTA })), {
+  loading: () => <div className="h-64"></div>
+})
+
+const Footer = dynamic(() => import("@/components/landing/Footer").then(mod => ({ default: mod.Footer })), {
+  loading: () => <div className="h-64"></div>
+})
 
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-white font-sans selection:bg-orange-100 selection:text-orange-900">
+      {/* Composants critiques chargés immédiatement */}
       <Header />
       <Hero />
+      
+      {/* Composants non-critiques chargés en lazy */}
       <Features />
       <HowItWorks />
       <UseCases />

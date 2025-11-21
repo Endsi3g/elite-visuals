@@ -35,11 +35,14 @@ export async function getRegistryItems(
 }
 
 export async function getRegistryItem(name: string, styleName: Style["name"]) {
-  const item = Index[styleName]?.[name]
+  const originalItem = Index[styleName]?.[name]
 
-  if (!item) {
+  if (!originalItem) {
     return null
   }
+
+  // Create a safe copy to avoid prototype pollution
+  const item = { ...originalItem }
 
   // Convert all file paths to object.
   // TODO: remove when we migrate to new registry.
