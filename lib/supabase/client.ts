@@ -158,7 +158,7 @@ export const profiles = {
   update: async (id: string, updates: { full_name?: string; avatar_url?: string }) => {
     const { data, error } = await supabase
       .from('profiles')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .select()
       .single()
@@ -196,7 +196,7 @@ export const boards = {
 
     const { data, error } = await supabase
       .from('boards')
-      .insert([{ title, description, owner_id: user.id }])
+      .insert([{ title, description, owner_id: user.id }] as any)
       .select()
       .single()
 
@@ -289,7 +289,7 @@ export const boards = {
   addCollaborator: async (boardId: string, userId: string, role: 'editor' | 'viewer' = 'viewer') => {
     const { data, error } = await supabase
       .from('board_collaborators')
-      .insert([{ board_id: boardId, user_id: userId, role }])
+      .insert([{ board_id: boardId, user_id: userId, role }] as any)
       .select()
       .single()
 
@@ -376,7 +376,7 @@ export const boardItems = {
   update: async (id: string, updates: any) => {
     const { data, error } = await supabase
       .from('board_items')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .select()
       .single()
@@ -436,7 +436,7 @@ export const tasks = {
   }) => {
     const { data, error } = await supabase
       .from('tasks')
-      .insert([task])
+      .insert([task] as any)
       .select()
       .single()
 
@@ -497,7 +497,7 @@ export const tasks = {
       .update({ 
         status: 'done',
         completed_at: new Date().toISOString()
-      })
+      } as any)
       .eq('id', id)
       .select()
       .single()
@@ -578,7 +578,7 @@ export const comments = {
   update: async (id: string, content: string) => {
     const { data, error } = await supabase
       .from('comments')
-      .update({ content })
+      .update({ content } as any)
       .eq('id', id)
       .select()
       .single()
@@ -637,7 +637,7 @@ export const aiGenerations = {
   }) => {
     const { data, error } = await supabase
       .from('ai_generations')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .select()
       .single()
