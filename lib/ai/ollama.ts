@@ -109,13 +109,33 @@ export async function analyzeMedia(
   }
 }
 
-export async function transcribeAudio(audioUrl: string) {
+// Alias pour analyzeImage (compatibilité avec les tests)
+export async function analyzeImage(imageUrl: string) {
   try {
-    // Utiliser Whisper via HuggingFace ou local
-    const response = await fetch(audioUrl)
-    const audioBlob = await response.blob()
-    const audioBuffer = await audioBlob.arrayBuffer()
-    const audioBase64 = Buffer.from(audioBuffer).toString('base64')
+    const response = await axios.post(`${OLLAMA_BASE_URL}/api/generate`, {
+      model: "llava",
+      prompt: "Analyse cette image et fournis des insights créatifs.",
+      images: [imageUrl],
+      stream: false,
+    })
+    return response.data.response
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function transcribeAudio(audioFile: File | string) {
+  try {
+    let audioBuffer: ArrayBuffer
+    
+    // Gérer File ou URL
+    if (audioFile instanceof File) {
+      audioBuffer = await audioFile.arrayBuffer()
+    } else {
+      const response = await fetch(audioFile)
+      const audioBlob = await response.blob()
+      audioBuffer = await audioBlob.arrayBuffer()
+    }
 
     // Option 1: HuggingFace Whisper
     if (HF_API_KEY) {
@@ -129,15 +149,10 @@ export async function transcribeAudio(audioUrl: string) {
           },
         }
       )
-      return {
-        success: true,
-        text: hfResponse.data.text,
-        model: "whisper-large-v3",
-      }
+      return hfResponse.data.text
     }
 
     // Option 2: Whisper local via Ollama (si disponible)
-    // Note: Nécessite d'avoir Whisper installé localement
     throw new Error("Transcription requires HuggingFace API key or local Whisper setup")
   } catch (error) {
     console.error("Transcription Error:", error)

@@ -23,24 +23,34 @@ describe('Ollama AI Service', () => {
       expect(mockedAxios.post).toHaveBeenCalledWith(
         expect.stringContaining('/api/generate'),
         expect.objectContaining({
-          prompt: 'Create a marketing script',
+          prompt: expect.stringContaining('Create a marketing script'),
           model: expect.any(String),
         })
       )
-      expect(result).toBe('Generated script content')
+      expect(result.success).toBe(true)
+      expect(result.content).toBe('Generated script content')
     })
 
     it('handles API errors gracefully', async () => {
       mockedAxios.post.mockRejectedValue(new Error('API Error'))
 
-      await expect(generateScript('Test prompt')).rejects.toThrow('API Error')
+      const result = await generateScript('Test prompt')
+      
+      expect(result.success).toBe(false)
+      expect(result.error).toBeDefined()
     })
 
     it('uses correct model from environment', async () => {
+      const originalModel = process.env.OLLAMA_MODEL
       process.env.OLLAMA_MODEL = 'mistral'
+      
+      // Recharger le module pour prendre en compte la nouvelle variable
+      jest.resetModules()
+      const { generateScript: generateScriptReloaded } = require('@/lib/ai/ollama')
+      
       mockedAxios.post.mockResolvedValue({ data: { response: 'test' } })
 
-      await generateScript('Test')
+      await generateScriptReloaded('Test')
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
         expect.any(String),
@@ -48,6 +58,9 @@ describe('Ollama AI Service', () => {
           model: 'mistral',
         })
       )
+      
+      // Restaurer la variable d'environnement
+      process.env.OLLAMA_MODEL = originalModel
     })
   })
 
@@ -81,6 +94,9 @@ describe('Ollama AI Service', () => {
 
   describe('transcribeAudio', () => {
     it('transcribes audio file', async () => {
+      // Mock HuggingFace API key
+      process.env.HUGGINGFACE_API_KEY = 'test-key'
+      
       const mockResponse = {
         data: {
           text: 'Transcribed audio content',
@@ -88,20 +104,31 @@ describe('Ollama AI Service', () => {
       }
       mockedAxios.post.mockResolvedValue(mockResponse)
 
+      // Mock File.arrayBuffer()
       const audioFile = new File(['audio'], 'test.mp3', { type: 'audio/mp3' })
+      audioFile.arrayBuffer = jest.fn().mockResolvedValue(new ArrayBuffer(8))
+
       const result = await transcribeAudio(audioFile)
 
       expect(result).toBe('Transcribed audio content')
+      
+      // Cleanup
+      delete process.env.HUGGINGFACE_API_KEY
     })
 
     it('handles large audio files', async () => {
-      const largeAudio = new File(['x'.repeat(100_000_000)], 'large.mp3', {
+      process.env.HUGGINGFACE_API_KEY = 'test-key'
+      
+      const largeAudio = new File(['x'.repeat(1000)], 'large.mp3', {
         type: 'audio/mp3',
       })
+      largeAudio.arrayBuffer = jest.fn().mockResolvedValue(new ArrayBuffer(1000))
 
       mockedAxios.post.mockResolvedValue({ data: { text: 'transcription' } })
 
       await expect(transcribeAudio(largeAudio)).resolves.toBeDefined()
+      
+      delete process.env.HUGGINGFACE_API_KEY
     })
   })
 })

@@ -7,14 +7,28 @@ process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-key'
 process.env.OLLAMA_BASE_URL = 'http://localhost:11434'
 process.env.OLLAMA_MODEL = 'llama3'
 
-// Mock fetch globally
-global.fetch = jest.fn(() =>
-  Promise.resolve({
+// Mock fetch globally avec support pour blob()
+global.fetch = jest.fn((url) => {
+  // Mock pour les fichiers audio
+  if (typeof url === 'string' && url.includes('audio')) {
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({}),
+      text: () => Promise.resolve(''),
+      blob: () => Promise.resolve(new Blob(['mock audio data'], { type: 'audio/mp3' })),
+      arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)),
+    })
+  }
+  
+  // Mock par défaut
+  return Promise.resolve({
     ok: true,
     json: () => Promise.resolve({}),
     text: () => Promise.resolve(''),
+    blob: () => Promise.resolve(new Blob(['mock data'])),
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)),
   })
-)
+})
 
 // Mock Konva
 jest.mock('konva', () => ({
