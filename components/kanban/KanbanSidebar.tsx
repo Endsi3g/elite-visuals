@@ -104,7 +104,7 @@ export default function KanbanSidebar() {
             <span>{doneTasks.length} Terminé</span>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Kanban Columns */}
       <main className="flex-1 overflow-y-auto p-4 space-y-4" role="main">

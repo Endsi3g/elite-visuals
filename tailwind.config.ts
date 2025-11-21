@@ -24,8 +24,8 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#E85535", // WCAG AA compliant (4.52:1)
-          hover: "#D64A2E", // Darker hover state (5.21:1)
+          DEFAULT: "#FF684A", // Elite Orange
+          hover: "#E55A3F", // Slightly darker for hover
           light: "#FF8A6B", // For non-text elements
           foreground: "#FFFFFF",
         },
@@ -72,11 +72,18 @@ const config: Config = {
           "0%, 100%": { boxShadow: "0 0 20px rgba(255, 104, 74, 0.3)" },
           "50%": { boxShadow: "0 0 40px rgba(255, 104, 74, 0.6)" },
         },
+        "blob": {
+          "0%": { transform: "translate(0px, 0px) scale(1)" },
+          "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+          "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+          "100%": { transform: "translate(0px, 0px) scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "glow": "glow 2s ease-in-out infinite",
+        "blob": "blob 7s infinite",
       },
     },
   },

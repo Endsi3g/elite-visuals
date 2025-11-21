@@ -1,6 +1,7 @@
 "use client"
 
 import { Group, Rect, Text } from "react-konva"
+import { useState } from "react"
 
 interface BoardCardProps {
   item: {
@@ -13,9 +14,12 @@ interface BoardCardProps {
     content: any
     title?: string
   }
+  isSelected?: boolean
+  onSelect?: () => void
 }
 
-export default function BoardCard({ item }: BoardCardProps) {
+export default function BoardCard({ item, isSelected = false, onSelect }: BoardCardProps) {
+  const [isHovered, setIsHovered] = useState(false)
   return (
     <Group
       x={item.x}
@@ -25,6 +29,10 @@ export default function BoardCard({ item }: BoardCardProps) {
         // Update position in state
         console.log("Moved to:", e.target.x(), e.target.y())
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onSelect}
+      onTap={onSelect}
     >
       {/* Card Background */}
       <Rect
@@ -32,10 +40,12 @@ export default function BoardCard({ item }: BoardCardProps) {
         height={item.height}
         fill="white"
         cornerRadius={8}
-        shadowColor="rgba(255, 104, 74, 0.2)"
-        shadowBlur={10}
-        shadowOffset={{ x: 0, y: 4 }}
-        shadowOpacity={0.3}
+        shadowColor={isSelected || isHovered ? "rgba(232, 85, 53, 0.4)" : "rgba(0, 0, 0, 0.1)"}
+        shadowBlur={isSelected || isHovered ? 20 : 10}
+        shadowOffset={{ x: 0, y: isSelected || isHovered ? 6 : 4 }}
+        shadowOpacity={isSelected || isHovered ? 0.5 : 0.2}
+        stroke={isSelected ? "#E85535" : isHovered ? "#FF8A6B" : undefined}
+        strokeWidth={isSelected ? 3 : isHovered ? 2 : 0}
       />
 
       {/* Card Title */}
@@ -71,7 +81,7 @@ export default function BoardCard({ item }: BoardCardProps) {
         y={8}
         width={32}
         height={20}
-        fill="#FF684A"
+        fill="#E85535"
         cornerRadius={4}
       />
       <Text

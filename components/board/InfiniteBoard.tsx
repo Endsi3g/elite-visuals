@@ -9,6 +9,9 @@ import BoardCard from "./BoardCard"
 import SmartCluster from "./SmartCluster"
 import { useVirtualizedItems } from "@/hooks/useVirtualizedItems"
 import { OptimizedGrid } from "./OptimizedGrid"
+import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation"
+import { useTouchGestures } from "@/hooks/use-touch-gestures"
+import { cn } from "@/lib/utils"
 
 interface BoardItem {
   id: string
@@ -38,7 +41,9 @@ export default function InfiniteBoard() {
   const [showSmartCluster, setShowSmartCluster] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 })
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
   const stageRef = useRef<any>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -52,6 +57,94 @@ export default function InfiniteBoard() {
     window.addEventListener('resize', updateDimensions)
     return () => window.removeEventListener('resize', updateDimensions)
   }, [])
+
+  // Hook de navigation clavier pour accessibilité
+  const { focusedId, setFocusedId } = useKeyboardNavigation({
+    items: items.map(item => ({
+      id: item.id,
+      type: 'card',
+      x: item.x,
+      y: item.y,
+      width: item.width,
+      height: item.height,
+      title: item.title || item.type
+    })),
+    onSelect: (id) => {
+      setSelectedItemId(id)
+      // Centrer la vue sur l'élément sélectionné
+      const item = items.find(i => i.id === id)
+      if (item && stageRef.current) {
+        const stage = stageRef.current
+        const newPos = {
+          x: dimensions.width / 2 - item.x * scale,
+          y: dimensions.height / 2 - item.y * scale
+        }
+        setPosition(newPos)
+      }
+    },
+    onMove: (id, dx, dy) => {
+      setItems(prev => prev.map(item => 
+        item.id === id 
+          ? { ...item, x: item.x + dx, y: item.y + dy }
+          : item
+      ))
+    },
+    onDelete: (id) => {
+      setItems(prev => prev.filter(item => item.id !== id))
+      setSelectedItemId(null)
+    },
+    onActivate: (id) => {
+      // Ouvrir l'édition de l'élément
+      setSelectedItemId(id)
+    },
+    enabled: true
+  })
+
+  // Hook de gestes tactiles pour mobile
+  const {
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    isPinching,
+    scale: touchScale
+  } = useTouchGestures({
+    onPinch: (newScale) => {
+      // Limiter le zoom entre 0.1 et 5
+      const clampedScale = Math.max(0.1, Math.min(5, newScale))
+      setScale(clampedScale)
+    },
+    onPan: (dx, dy) => {
+      if (!isPinching) {
+        setPosition(prev => ({
+          x: prev.x + dx,
+          y: prev.y + dy
+        }))
+      }
+    },
+    onTap: (x, y) => {
+      // Détecter si on a tapé sur un élément
+      const stage = stageRef.current
+      if (stage) {
+        const pos = stage.getPointerPosition()
+        const clickedItem = items.find(item => {
+          const itemX = item.x * scale + position.x
+          const itemY = item.y * scale + position.y
+          return (
+            pos.x >= itemX &&
+            pos.x <= itemX + item.width * scale &&
+            pos.y >= itemY &&
+            pos.y <= itemY + item.height * scale
+          )
+        })
+        if (clickedItem) {
+          setSelectedItemId(clickedItem.id)
+          setFocusedId(clickedItem.id)
+        }
+      }
+    },
+    minPinchScale: 0.1,
+    maxPinchScale: 5
+  })
 
   // Hook de virtualisation pour ne rendre que les éléments visibles
   const { visibleItems, viewport, updateVisibleItems } = useVirtualizedItems(
@@ -98,11 +191,13 @@ export default function InfiniteBoard() {
     }
 
     const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy
-    setScale(newScale)
+    // Limiter le zoom entre 0.1 et 5
+    const clampedScale = Math.max(0.1, Math.min(5, newScale))
+    setScale(clampedScale)
 
     const newPos = {
-      x: pointer.x - mousePointTo.x * newScale,
-      y: pointer.y - mousePointTo.y * newScale,
+      x: pointer.x - mousePointTo.x * clampedScale,
+      y: pointer.y - mousePointTo.y * clampedScale,
     }
     setPosition(newPos)
     
@@ -181,61 +276,105 @@ export default function InfiniteBoard() {
   }
 
   return (
-    <div {...getRootProps()} className="w-full h-full relative infinite-board bg-gray-50">
-      <input {...getInputProps()} />
+    <div 
+      {...getRootProps()} 
+      ref={containerRef}
+      className="w-full h-full relative infinite-board bg-gray-50"
+      role="application"
+      aria-label="Board créatif infini Elite Visuals"
+      onTouchStart={handleTouchStart as any}
+      onTouchMove={handleTouchMove as any}
+      onTouchEnd={handleTouchEnd as any}
+    >
+      <input {...getInputProps()} aria-label="Déposer des fichiers" />
+      
+      {/* Accessibility Layer - Hidden but accessible to screen readers */}
+      <div className="sr-only" role="region" aria-label="Éléments du board">
+        <p>Utilisez Tab pour naviguer entre les éléments, les flèches pour les déplacer, Enter pour éditer, et Delete pour supprimer.</p>
+        {items.map(item => (
+          <button
+            key={`a11y-${item.id}`}
+            onClick={() => {
+              setSelectedItemId(item.id)
+              setFocusedId(item.id)
+            }}
+            aria-label={`${item.type}: ${item.title || 'Sans titre'} à la position x:${Math.round(item.x)}, y:${Math.round(item.y)}`}
+            aria-pressed={selectedItemId === item.id || focusedId === item.id}
+          >
+            {item.title || item.type}
+          </button>
+        ))}
+      </div>
       
       {/* Floating Action Buttons */}
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+      <nav className="absolute top-4 left-4 z-10 flex flex-col gap-2" aria-label="Actions rapides du board">
         <Button
           onClick={addTextCard}
-          className="bg-primary hover:bg-primary/90 glow-orange shadow-lg"
+          className="bg-primary hover:bg-primary/90 glow-orange shadow-lg min-w-[44px] min-h-[44px] touch-manipulation"
           size="icon"
+          aria-label="Ajouter une note (Ctrl+N)"
+          title="Ajouter une note"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-5 w-5" aria-hidden="true" />
         </Button>
         <Button
           onClick={generateAIContent}
-          className="bg-primary hover:bg-primary/90 glow-orange shadow-lg"
+          className="bg-primary hover:bg-primary/90 glow-orange shadow-lg min-w-[44px] min-h-[44px] touch-manipulation"
           size="icon"
+          aria-label="Générer du contenu avec IA (Ctrl+G)"
+          title="Générer avec IA"
         >
-          <Wand2 className="h-5 w-5" />
+          <Wand2 className="h-5 w-5" aria-hidden="true" />
         </Button>
         <Button
-          className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-lg"
+          className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-lg min-w-[44px] min-h-[44px] touch-manipulation"
           size="icon"
+          aria-label="Télécharger des fichiers"
+          title="Upload"
         >
-          <Upload className="h-5 w-5" />
+          <Upload className="h-5 w-5" aria-hidden="true" />
         </Button>
         <Button
           onClick={() => setShowExportMenu(!showExportMenu)}
-          className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-lg"
+          className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-lg min-w-[44px] min-h-[44px] touch-manipulation"
           size="icon"
+          aria-label="Exporter le board (Ctrl+E)"
+          aria-expanded={showExportMenu}
+          title="Exporter"
         >
-          <Download className="h-5 w-5" />
+          <Download className="h-5 w-5" aria-hidden="true" />
         </Button>
-      </div>
+      </nav>
 
       {/* Export Menu */}
       {showExportMenu && (
-        <div className="absolute top-4 left-20 z-10 bg-white rounded-lg shadow-lg border border-gray-200 p-3 min-w-[200px]">
+        <div 
+          className="absolute top-4 left-20 z-10 bg-white rounded-lg shadow-lg border border-gray-200 p-3 min-w-[200px]"
+          role="menu"
+          aria-label="Menu d'export"
+        >
           <h3 className="font-semibold text-sm mb-2">Exporter le Board</h3>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2" role="group">
             <Button
               onClick={exportToMarkdown}
               variant="ghost"
               size="sm"
-              className="justify-start"
+              className="justify-start min-h-[44px] touch-manipulation"
+              role="menuitem"
+              aria-label="Exporter en Markdown"
             >
-              <FileText className="h-4 w-4 mr-2" />
+              <FileText className="h-4 w-4 mr-2" aria-hidden="true" />
               Markdown
             </Button>
             <Button
               onClick={exportToPDF}
               variant="ghost"
               size="sm"
-              className="justify-start"
+              className="justify-start min-h-[44px] touch-manipulation"
+              role="menuitem"
+              aria-label="Exporter en PDF"
             >
-              <FileText className="h-4 w-4 mr-2" />
+              <FileText className="h-4 w-4 mr-2" aria-hidden="true" />
               PDF
             </Button>
           </div>
@@ -263,7 +402,7 @@ export default function InfiniteBoard() {
         scaleY={scale}
         x={position.x}
         y={position.y}
-        draggable
+        draggable={!isPinching}
         onWheel={handleWheel}
         onDragStart={() => setIsDragging(true)}
         onDragEnd={(e) => {
@@ -272,7 +411,10 @@ export default function InfiniteBoard() {
           // Mettre à jour les éléments visibles après le pan
           updateVisibleItems()
         }}
-        style={{ pointerEvents: 'auto' }}
+        style={{ 
+          pointerEvents: 'auto',
+          touchAction: 'none' // Prevent default touch behaviors
+        }}
       >
         <Layer>
           {/* Grille optimisée - ne rend que les lignes visibles */}
@@ -280,16 +422,35 @@ export default function InfiniteBoard() {
 
           {/* Board Items - seulement les éléments visibles */}
           {visibleItems.map((item) => (
-            <BoardCard key={item.id} item={item} />
+            <BoardCard 
+              key={item.id} 
+              item={item}
+              isSelected={selectedItemId === item.id || focusedId === item.id}
+              onSelect={() => {
+                setSelectedItemId(item.id)
+                setFocusedId(item.id)
+              }}
+            />
           ))}
         </Layer>
       </Stage>
 
       {/* Info Bar */}
-      <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-lg shadow-lg border border-gray-200">
+      <div 
+        className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-lg shadow-lg border border-gray-200"
+        role="status"
+        aria-live="polite"
+        aria-label="Informations du board"
+      >
         <p className="text-sm text-gray-600">
           Zoom: {Math.round(scale * 100)}% | Items: {items.length} ({visibleItems.length} visibles) | Clusters: {clusters.length}
+          {focusedId && ` | Élément sélectionné: ${items.find(i => i.id === focusedId)?.title || 'Sans titre'}`}
         </p>
+      </div>
+      
+      {/* Keyboard shortcuts hint */}
+      <div className="sr-only" role="status" aria-live="polite">
+        {focusedId && `Élément ${items.find(i => i.id === focusedId)?.title || 'sans titre'} sélectionné. Utilisez les flèches pour déplacer, Enter pour éditer, Delete pour supprimer.`}
       </div>
 
       {/* Smart Cluster */}

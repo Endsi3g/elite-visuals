@@ -1,41 +1,27 @@
-"use client"
+import { Header } from "@/components/landing/Header"
+import { Hero } from "@/components/landing/Hero"
+import { Features } from "@/components/landing/Features"
+import { HowItWorks } from "@/components/landing/HowItWorks"
+import { UseCases } from "@/components/landing/UseCases"
+import { Testimonials } from "@/components/landing/Testimonials"
+import { Pricing } from "@/components/landing/Pricing"
+import { FAQ } from "@/components/landing/FAQ"
+import { CTA } from "@/components/landing/CTA"
+import { Footer } from "@/components/landing/Footer"
 
-import { useState } from "react"
-import Header from "@/components/layout/Header"
-import InfiniteBoard from "@/components/board/InfiniteBoard"
-import KanbanSidebar from "@/components/kanban/KanbanSidebar"
-import { Button } from "@/components/ui/button"
-import { PanelRightOpen, PanelRightClose } from "lucide-react"
-
-export default function Home() {
-  const [showKanban, setShowKanban] = useState(true)
-
+export default function LandingPage() {
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <main className="min-h-screen bg-white font-sans selection:bg-orange-100 selection:text-orange-900">
       <Header />
-      
-      <div className="flex-1 flex relative overflow-hidden">
-        {/* Main Board Area */}
-        <div className="flex-1 relative">
-          <InfiniteBoard />
-          
-          {/* Toggle Kanban Button */}
-          <Button
-            onClick={() => setShowKanban(!showKanban)}
-            className="absolute top-4 right-4 z-10 bg-primary hover:bg-primary/90 glow-orange"
-            size="icon"
-          >
-            {showKanban ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
-          </Button>
-        </div>
-
-        {/* Kanban Sidebar */}
-        {showKanban && (
-          <div className="w-96 border-l border-gray-200 bg-white shadow-lg">
-            <KanbanSidebar />
-          </div>
-        )}
-      </div>
-    </div>
+      <Hero />
+      <Features />
+      <HowItWorks />
+      <UseCases />
+      <Testimonials />
+      <Pricing />
+      <FAQ />
+      <CTA />
+      <Footer />
+    </main>
   )
 }
