@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { KanbanColumn } from '@/components/kanban/KanbanColumn'
+import KanbanColumn from '@/components/kanban/KanbanColumn'
 
 describe('KanbanColumn', () => {
   const mockTasks = [
@@ -7,56 +7,41 @@ describe('KanbanColumn', () => {
       id: '1',
       title: 'Task 1',
       description: 'Description 1',
-      status: 'backlog' as const,
-      assignedAgent: 'openai',
-      createdAt: new Date().toISOString(),
+      status: 'todo' as const,
+      assignedTo: 'openai' as const,
+      createdAt: new Date(),
+      aiGenerated: true,
     },
     {
       id: '2',
       title: 'Task 2',
       description: 'Description 2',
-      status: 'backlog' as const,
-      assignedAgent: 'claude',
-      createdAt: new Date().toISOString(),
+      status: 'todo' as const,
+      assignedTo: 'claude' as const,
+      createdAt: new Date(),
     },
   ]
 
   it('renders column with correct title', () => {
     render(
       <KanbanColumn
-        title="Backlog"
-        status="backlog"
+        title="To Do"
+        status="todo"
         tasks={mockTasks}
-        onTaskMove={() => {}}
-        onTaskDelete={() => {}}
+        onUpdateStatus={() => {}}
       />
     )
     
-    expect(screen.getByText('Backlog')).toBeInTheDocument()
-  })
-
-  it('displays task count', () => {
-    render(
-      <KanbanColumn
-        title="Backlog"
-        status="backlog"
-        tasks={mockTasks}
-        onTaskMove={() => {}}
-        onTaskDelete={() => {}}
-      />
-    )
-    
-    expect(screen.getByText('2')).toBeInTheDocument()
+    expect(screen.getByText('To Do')).toBeInTheDocument()
   })
 
   it('renders all tasks', () => {
     render(
       <KanbanColumn
-        title="Backlog"
-        status="backlog"
+        title="To Do"
+        status="todo"
         tasks={mockTasks}
-        onTaskMove={() => {}}
-        onTaskDelete={() => {}}
+        onUpdateStatus={() => {}}
       />
     )
     
@@ -64,72 +49,75 @@ describe('KanbanColumn', () => {
     expect(screen.getByText('Task 2')).toBeInTheDocument()
   })
 
-  it('shows agent icons', () => {
+  it('displays task descriptions', () => {
     render(
       <KanbanColumn
-        title="Backlog"
-        status="backlog"
+        title="To Do"
+        status="todo"
         tasks={mockTasks}
-        onTaskMove={() => {}}
-        onTaskDelete={() => {}}
+        onUpdateStatus={() => {}}
       />
     )
     
-    const openaiIcon = screen.getByTestId('agent-icon-openai')
-    const claudeIcon = screen.getByTestId('agent-icon-claude')
-    
-    expect(openaiIcon).toBeInTheDocument()
-    expect(claudeIcon).toBeInTheDocument()
+    expect(screen.getByText('Description 1')).toBeInTheDocument()
+    expect(screen.getByText('Description 2')).toBeInTheDocument()
   })
 
-  it('calls onTaskDelete when delete button is clicked', () => {
-    const onTaskDelete = jest.fn()
+  it('displays agent names', () => {
     render(
       <KanbanColumn
-        title="Backlog"
-        status="backlog"
+        title="To Do"
+        status="todo"
         tasks={mockTasks}
-        onTaskMove={() => {}}
-        onTaskDelete={onTaskDelete}
+        onUpdateStatus={() => {}}
       />
     )
     
-    const deleteButtons = screen.getAllByRole('button', { name: /delete/i })
-    fireEvent.click(deleteButtons[0])
-    
-    expect(onTaskDelete).toHaveBeenCalledWith('1')
+    expect(screen.getByText('OPENAI')).toBeInTheDocument()
+    expect(screen.getByText('CLAUDE')).toBeInTheDocument()
   })
 
-  it('handles drag and drop', () => {
-    const onTaskMove = jest.fn()
+  it('calls onUpdateStatus when task is clicked', () => {
+    const onUpdateStatus = jest.fn()
     render(
       <KanbanColumn
-        title="Backlog"
-        status="backlog"
+        title="To Do"
+        status="todo"
         tasks={mockTasks}
-        onTaskMove={onTaskMove}
-        onTaskDelete={() => {}}
+        onUpdateStatus={onUpdateStatus}
       />
     )
     
     const task = screen.getByText('Task 1')
-    fireEvent.dragStart(task)
-    fireEvent.drop(task)
+    fireEvent.click(task)
     
-    expect(onTaskMove).toHaveBeenCalled()
+    expect(onUpdateStatus).toHaveBeenCalledWith('1', 'in-progress')
+  })
+
+  it('shows AI badge for AI-generated tasks', () => {
+    render(
+      <KanbanColumn
+        title="To Do"
+        status="todo"
+        tasks={mockTasks}
+        onUpdateStatus={() => {}}
+      />
+    )
+    
+    const aiBadges = screen.getAllByText('IA')
+    expect(aiBadges).toHaveLength(1)
   })
 
   it('shows empty state when no tasks', () => {
     render(
       <KanbanColumn
-        title="Backlog"
-        status="backlog"
+        title="To Do"
+        status="todo"
         tasks={[]}
-        onTaskMove={() => {}}
-        onTaskDelete={() => {}}
+        onUpdateStatus={() => {}}
       />
     )
     
-    expect(screen.getByText(/no tasks/i)).toBeInTheDocument()
+    expect(screen.getByText('Aucune tâche')).toBeInTheDocument()
   })
 })

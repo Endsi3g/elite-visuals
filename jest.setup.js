@@ -45,9 +45,11 @@ jest.mock('react-konva', () => {
   return {
     Stage: ({ children }) => React.createElement('div', { 'data-testid': 'konva-stage' }, children),
     Layer: ({ children }) => React.createElement('div', { 'data-testid': 'konva-layer' }, children),
+    Group: ({ children }) => React.createElement('div', { 'data-testid': 'konva-group' }, children),
     Rect: () => React.createElement('div', { 'data-testid': 'konva-rect' }),
     Circle: () => React.createElement('div', { 'data-testid': 'konva-circle' }),
     Image: () => React.createElement('div', { 'data-testid': 'konva-image' }),
+    Text: ({ text }) => React.createElement('div', { 'data-testid': 'konva-text' }, text),
   }
 })
 
