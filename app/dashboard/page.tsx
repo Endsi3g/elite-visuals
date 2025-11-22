@@ -1,11 +1,32 @@
 "use client"
 
 import { useState } from "react"
+import dynamic from "next/dynamic"
 import Header from "@/components/layout/Header"
-import InfiniteBoard from "@/components/board/InfiniteBoard"
-import KanbanSidebar from "@/components/kanban/KanbanSidebar"
 import { Button } from "@/components/ui/button"
 import { PanelRightOpen, PanelRightClose } from "lucide-react"
+
+// Lazy load des composants lourds
+const InfiniteBoard = dynamic(() => import("@/components/board/InfiniteBoard"), {
+  loading: () => (
+    <div className="h-full w-full flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <p className="text-gray-600">Chargement du board...</p>
+      </div>
+    </div>
+  ),
+  ssr: false
+})
+
+const KanbanSidebar = dynamic(() => import("@/components/kanban/KanbanSidebar"), {
+  loading: () => (
+    <div className="h-full w-full flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  ),
+  ssr: false
+})
 
 export default function Dashboard() {
   const [showKanban, setShowKanban] = useState(true)

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { ArrowRight, Play, Users, Sparkles, Zap } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 export function Hero() {
   return (
@@ -135,11 +136,15 @@ export function Hero() {
                     className="absolute top-20 right-20 w-56 h-40 bg-white rounded-xl shadow-lg border border-orange-100 p-0 overflow-hidden rotate-[3deg]"
                   >
                      <div className="h-full w-full relative group">
-                        {/* Image de présentation */}
-                        <img 
+                        {/* Image de présentation optimisée */}
+                        <Image 
                           src="/images/presentation-video.jpg" 
                           alt="Présentation vidéo" 
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          loading="lazy"
+                          quality={85}
+                          sizes="(max-width: 768px) 100vw, 224px"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
                            <Play className="w-12 h-12 text-white opacity-80 group-hover:opacity-100 transition-opacity" />
