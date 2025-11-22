@@ -6,6 +6,9 @@ process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-key'
 process.env.OLLAMA_BASE_URL = 'http://localhost:11434'
 process.env.OLLAMA_MODEL = 'llama3'
+process.env.HUGGINGFACE_API_KEY = 'test-hf-key'
+process.env.ANTHROPIC_API_KEY = 'test-anthropic-key'
+process.env.NEXT_PUBLIC_OPENAI_API_KEY = 'test-openai-key'
 
 // Mock fetch globally avec support pour blob() et jest.resetModules()
 const createFetchMock = () => jest.fn((url) => {
@@ -107,3 +110,77 @@ global.ResizeObserver = class ResizeObserver {
   observe() {}
   unobserve() {}
 }
+
+// Mock HTMLCanvasElement pour Konva
+HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
+  fillRect: jest.fn(),
+  clearRect: jest.fn(),
+  getImageData: jest.fn(() => ({ data: new Uint8ClampedArray() })),
+  putImageData: jest.fn(),
+  createImageData: jest.fn(() => ({ data: new Uint8ClampedArray() })),
+  setTransform: jest.fn(),
+  drawImage: jest.fn(),
+  save: jest.fn(),
+  fillText: jest.fn(),
+  restore: jest.fn(),
+  beginPath: jest.fn(),
+  moveTo: jest.fn(),
+  lineTo: jest.fn(),
+  closePath: jest.fn(),
+  stroke: jest.fn(),
+  translate: jest.fn(),
+  scale: jest.fn(),
+  rotate: jest.fn(),
+  arc: jest.fn(),
+  fill: jest.fn(),
+  measureText: jest.fn(() => ({ width: 0 })),
+  transform: jest.fn(),
+  rect: jest.fn(),
+  clip: jest.fn(),
+  fillStyle: '',
+  strokeStyle: '',
+  lineWidth: 1,
+  canvas: {
+    width: 800,
+    height: 600,
+  },
+}))
+
+// Mock pour Image
+global.Image = class {
+  constructor() {
+    this.width = 0
+    this.height = 0
+    setTimeout(() => {
+      if (this.onload) this.onload()
+    }, 0)
+  }
+  set src(value) {
+    this._src = value
+  }
+  get src() {
+    return this._src
+  }
+}
+
+// Mock pour createObjectURL
+global.URL.createObjectURL = jest.fn(() => 'mock-url')
+global.URL.revokeObjectURL = jest.fn()
+
+// Mock pour les modules AI
+jest.mock('axios', () => ({
+  default: {
+    post: jest.fn(() => Promise.resolve({
+      data: { response: 'Mock AI response' }
+    })),
+    get: jest.fn(() => Promise.resolve({
+      data: {}
+    })),
+  },
+  post: jest.fn(() => Promise.resolve({
+    data: { response: 'Mock AI response' }
+  })),
+  get: jest.fn(() => Promise.resolve({
+    data: {}
+  })),
+}))
