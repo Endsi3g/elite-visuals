@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import Header from "@/components/layout/Header"
 import { Button } from "@/components/ui/button"
@@ -30,6 +30,26 @@ const KanbanSidebar = dynamic(() => import("@/components/kanban/KanbanSidebar"),
 
 export default function Dashboard() {
   const [showKanban, setShowKanban] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Attendre le montage côté client pour éviter les erreurs d'hydration
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return (
+      <div className="h-screen flex flex-col bg-white">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-600">Chargement du dashboard...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="h-screen flex flex-col bg-white">

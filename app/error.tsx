@@ -13,11 +13,14 @@ export default function Error({
 }) {
   useEffect(() => {
     // Log the error to console with proper formatting
-    console.error('Application Error:', {
-      message: error.message,
-      stack: error.stack,
-      digest: error.digest,
-    })
+    if (error) {
+      console.error('Application Error:', {
+        message: error.message || 'Unknown error',
+        stack: error.stack,
+        digest: error.digest,
+        error: error,
+      })
+    }
   }, [error])
 
   return (
