@@ -23,7 +23,8 @@ export async function middleware(req: NextRequest) {
   const isAuthRoute = authRoutes.some(route => req.nextUrl.pathname.startsWith(route))
 
   // Redirection si non connecté et accès à une route protégée
-  if (isProtectedRoute && !session) {
+  // En mode développement, permettre l'accès sans authentification
+  if (isProtectedRoute && !session && process.env.NODE_ENV !== 'development') {
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = '/login'
     redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname)
