@@ -1,3 +1,5 @@
+"use client"
+
 import dynamic from 'next/dynamic'
 import { Header } from "@/components/landing/Header"
 import { Hero } from "@/components/landing/Hero"
