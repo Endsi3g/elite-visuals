@@ -1,8 +1,14 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { Circle, Line, Text, Group } from "react-konva"
+import dynamic from "next/dynamic"
 import { Brain, Plus, Sparkles } from "lucide-react"
+
+// Import Konva dynamiquement pour éviter les erreurs SSR
+const Circle = dynamic(() => import("react-konva").then(mod => mod.Circle), { ssr: false }) as any
+const Line = dynamic(() => import("react-konva").then(mod => mod.Line), { ssr: false }) as any
+const Text = dynamic(() => import("react-konva").then(mod => mod.Text), { ssr: false }) as any
+const Group = dynamic(() => import("react-konva").then(mod => mod.Group), { ssr: false }) as any
 import { Button } from "@/components/ui/button"
 
 interface MindMapNode {

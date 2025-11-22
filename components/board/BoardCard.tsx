@@ -1,7 +1,12 @@
 "use client"
 
-import { Group, Rect, Text } from "react-konva"
 import { useState } from "react"
+import dynamic from "next/dynamic"
+
+// Import Konva dynamiquement pour éviter les erreurs SSR
+const Group = dynamic(() => import("react-konva").then(mod => mod.Group), { ssr: false }) as any
+const Rect = dynamic(() => import("react-konva").then(mod => mod.Rect), { ssr: false }) as any
+const Text = dynamic(() => import("react-konva").then(mod => mod.Text), { ssr: false }) as any
 
 interface BoardCardProps {
   item: {

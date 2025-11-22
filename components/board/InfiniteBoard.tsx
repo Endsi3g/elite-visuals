@@ -1,8 +1,15 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react"
-import { Stage, Layer, Rect, Text, Image as KonvaImage } from "react-konva"
+import dynamic from "next/dynamic"
 import { Plus, Upload, Wand2, Video, FileText, Image as ImageIcon, Download } from "lucide-react"
+
+// Import Konva dynamiquement pour éviter les erreurs SSR
+const Stage = dynamic(() => import("react-konva").then(mod => mod.Stage), { ssr: false }) as any
+const Layer = dynamic(() => import("react-konva").then(mod => mod.Layer), { ssr: false }) as any
+const Rect = dynamic(() => import("react-konva").then(mod => mod.Rect), { ssr: false }) as any
+const Text = dynamic(() => import("react-konva").then(mod => mod.Text), { ssr: false }) as any
+const KonvaImage = dynamic(() => import("react-konva").then(mod => mod.Image), { ssr: false }) as any
 import { Button } from "@/components/ui/button"
 import { useDropzone } from "react-dropzone"
 import BoardCard from "./BoardCard"
