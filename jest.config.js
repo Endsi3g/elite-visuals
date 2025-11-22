@@ -36,6 +36,8 @@ const customJestConfig = {
     '/node_modules/',
     '/.next/',
     '/e2e/',
+    '/__tests__/setup.d.ts',
+    '\\.d\\.ts$',
   ],
 }
 
