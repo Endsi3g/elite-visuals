@@ -39,9 +39,14 @@ const createFetchMock = () => jest.fn((url) => {
 
 global.fetch = createFetchMock()
 
-// Reset fetch mock après chaque test
+// Reset fetch mock et cleanup après chaque test
 afterEach(() => {
   global.fetch = createFetchMock()
+  // Nettoyer tous les timers
+  jest.clearAllTimers()
+  jest.useRealTimers()
+  // Nettoyer les mocks
+  jest.clearAllMocks()
 })
 
 // Mock Konva avec support pour jest.resetModules()
@@ -71,10 +76,19 @@ jest.mock('react-konva', () => {
   const React = require('react')
   
   const createMockComponent = (testId) => {
-    return React.forwardRef(({ children, ...props }, ref) => {
+    return React.forwardRef(({ children, onClick, onTap, onDragEnd, onTransform, ...props }, ref) => {
+      // Simuler les événements Konva
+      const handleClick = (e) => {
+        if (onClick) onClick(e)
+        if (onTap) onTap(e)
+      }
+      
       return React.createElement('div', { 
         'data-testid': testId,
         ref,
+        onClick: handleClick,
+        onMouseUp: onDragEnd,
+        onTouchEnd: onDragEnd,
         ...props
       }, children)
     })
@@ -89,6 +103,7 @@ jest.mock('react-konva', () => {
     Image: createMockComponent('konva-image'),
     Text: createMockComponent('konva-text'),
     Line: createMockComponent('konva-line'),
+    Transformer: createMockComponent('konva-transformer'),
   }
 })
 
@@ -184,3 +199,36 @@ jest.mock('axios', () => ({
     data: {}
   })),
 }))
+
+// Supprimer les console.error et console.warn dans les tests
+const originalError = console.error
+const originalWarn = console.warn
+
+beforeAll(() => {
+  console.error = jest.fn((...args) => {
+    // Ignorer certaines erreurs connues
+    const message = args[0]?.toString() || ''
+    if (
+      message.includes('Not implemented: HTMLFormElement.prototype.submit') ||
+      message.includes('React does not recognize') ||
+      message.includes('Unknown event handler')
+    ) {
+      return
+    }
+    originalError(...args)
+  })
+  
+  console.warn = jest.fn((...args) => {
+    // Ignorer certains warnings connus
+    const message = args[0]?.toString() || ''
+    if (message.includes('Ollama not available')) {
+      return
+    }
+    originalWarn(...args)
+  })
+})
+
+afterAll(() => {
+  console.error = originalError
+  console.warn = originalWarn
+})

@@ -2,8 +2,16 @@ import axios from 'axios'
 import { generateScript, analyzeImage, transcribeAudio } from '@/lib/ai/ollama'
 import { setConfig, resetConfig } from '@/lib/ai/ollama.config'
 
+// Mock axios avec des réponses par défaut
 jest.mock('axios')
 const mockedAxios = axios as jest.Mocked<typeof axios>
+
+// Mock console pour éviter les logs dans les tests
+global.console = {
+  ...console,
+  error: jest.fn(),
+  warn: jest.fn(),
+}
 
 // Helper pour créer un mock de File avec arrayBuffer
 const createMockFile = (content: string, filename: string, type: string): File => {
@@ -17,11 +25,16 @@ describe('Ollama AI Service', () => {
     jest.clearAllMocks()
     // Réinitialiser la configuration pour chaque test
     resetConfig()
+    // Reset console mocks
+    ;(console.error as jest.Mock).mockClear()
+    ;(console.warn as jest.Mock).mockClear()
   })
 
   afterEach(() => {
     // Restaurer la configuration par défaut
     resetConfig()
+    // Nettoyer les timers
+    jest.clearAllTimers()
   })
 
   describe('generateScript', () => {
