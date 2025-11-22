@@ -134,12 +134,18 @@ export function Hero() {
                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                     className="absolute top-20 right-20 w-56 h-40 bg-white rounded-xl shadow-lg border border-orange-100 p-0 overflow-hidden rotate-[3deg]"
                   >
-                     <div className="h-full w-full bg-gray-100 relative group">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                           <Play className="w-12 h-12 text-white opacity-50" />
+                     <div className="h-full w-full relative group">
+                        {/* Image de présentation */}
+                        <img 
+                          src="/images/presentation-video.jpg" 
+                          alt="Présentation vidéo" 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                           <Play className="w-12 h-12 text-white opacity-80 group-hover:opacity-100 transition-opacity" />
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/50 to-transparent text-white text-xs font-medium">
-                           Video_Viral_V3.mp4
+                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent text-white text-xs font-medium">
+                           Présentation Elite Visuals • 3:54
                         </div>
                      </div>
                   </motion.div>
