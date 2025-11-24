@@ -10,12 +10,24 @@ const rateLimit = new Map<string, { count: number; resetTime: number }>()
  */
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+  
+  // Vérifier si Supabase est configuré
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const isSupabaseConfigured = supabaseUrl && supabaseKey && 
+    supabaseUrl.startsWith('http') && 
+    !supabaseUrl.includes('your-supabase')
 
-  // Rafraîchir la session si elle existe
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+  let session = null
+
+  // Créer le client Supabase uniquement si configuré
+  if (isSupabaseConfigured) {
+    const supabase = createMiddlewareClient({ req, res })
+    
+    // Rafraîchir la session si elle existe
+    const sessionData = await supabase.auth.getSession()
+    session = sessionData.data.session
+  }
 
   // Routes protégées qui nécessitent une authentification
   const protectedRoutes = ['/dashboard']
