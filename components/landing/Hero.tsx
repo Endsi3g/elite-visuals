@@ -138,7 +138,7 @@ export function Hero() {
                      <div className="h-full w-full relative group">
                         {/* Image de présentation optimisée */}
                         <Image 
-                          src="/images/presentation-video.jpg" 
+                          src="/images/presentation-video.png" 
                           alt="Présentation vidéo" 
                           fill
                           className="object-cover"
