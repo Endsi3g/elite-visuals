@@ -1,9 +1,17 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+// Vérifier si Supabase est configuré
+const isSupabaseConfigured = supabaseUrl && supabaseKey && 
+  supabaseUrl.startsWith('http') && 
+  !supabaseUrl.includes('placeholder')
+
+// Créer le client uniquement si configuré, sinon utiliser un client factice
+export const supabase = isSupabaseConfigured 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null as any // Client factice pour éviter les erreurs
 
 export interface CollaborationUser {
   id: string
