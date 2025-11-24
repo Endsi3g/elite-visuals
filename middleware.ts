@@ -54,7 +54,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Rate Limiting (100 requêtes par minute par IP)
-  const ip = req.ip || req.headers.get('x-forwarded-for') || 'unknown'
+  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
   const now = Date.now()
   const windowMs = 60 * 1000 // 1 minute
   const maxRequests = 100
