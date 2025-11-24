@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.github
+.vscode
+*.log
+npm-debug.log*
+.DS_Store
+.env*.local
+coverage
+.backup-md-files
+.backup-md-files-old
+reports
+playwright-report
+test-results

@@ -106,15 +106,32 @@ npm run build            # Build de production
 npm run start            # Démarrer en production
 npm run lint             # Linter le code
 
-# Tests
-npm run test             # Tests unitaires
-npm run test:e2e         # Tests end-to-end
-npm run test:accessibility  # Tests d'accessibilité
+# Tests Unitaires
+npm test                 # Tests unitaires (Jest)
+npm run test:watch       # Tests en mode watch
+npm run test:coverage    # Tests avec couverture
+
+# Tests E2E
+npm run test:e2e         # Tous les tests E2E (Playwright)
+npm run test:e2e:ui      # Tests E2E en mode UI
+npm run test:landing     # Tests de la landing page
+npm run test:ai-tasks    # Tests de la page AI Tasks
+npm run test:performance # Tests de performance
+
+# Tests d'Accessibilité
+npm run test:accessibility  # Tests d'accessibilité automatisés
+
+# Lighthouse & Performance
+npm run lighthouse       # Audit Lighthouse local
+npm run lighthouse:ci    # Lighthouse CI complet
+
+# Tous les Tests
+npm run test:all         # Tests unitaires + E2E
+npm run test:all-local   # Suite complète (PowerShell)
 
 # Audit
 npm run audit:accessibility  # Audit accessibilité
 npm run audit:full       # Audit complet du projet
-npm run lighthouse       # Audit performance
 ```
 
 ---
